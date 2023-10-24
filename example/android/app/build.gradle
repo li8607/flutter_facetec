@@ -35,12 +35,14 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.facetec.flutter_facetec_example"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
+
     }
 
     buildTypes {
@@ -49,6 +51,18 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs', '../flutter_facetec/libs']
+        }
+    }
+    // FaceTecSDK: Add dependencies for native library
+    dependencies {
+        // Add your facetec-sdk .aar file to app/libs.
+        implementation (files("libs/facetec-sdk-9.6.54.aar"))
+        implementation 'androidx.appcompat:appcompat:1.6.1'
+        implementation 'androidx.multidex:multidex:2.0.1'
     }
 }
 

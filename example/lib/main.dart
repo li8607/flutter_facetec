@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_facetec/flutter_facetec.dart';
+import 'package:flutter_facetec_example/facetec_config.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,8 +32,8 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      platformVersion =
-          await _flutterFacetecPlugin.getPlatformVersion() ?? 'Unknown platform version';
+      platformVersion = await _flutterFacetecPlugin.getPlatformVersion() ??
+          'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -54,8 +55,27 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Running on: $_platformVersion\n'),
+            ElevatedButton(
+              onPressed: () async {
+                final result2 = await _flutterFacetecPlugin.initialize(
+                    FaceTecConfig.deviceKeyIdentifier,
+                    FaceTecConfig.publicFaceScanEncryptionKey);
+                print("reuslt = $result2");
+              },
+              child: const Text('Initialize'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final reuslt = await _flutterFacetecPlugin.startLiveness();
+                print("reuslt = $reuslt");
+              },
+              child: const Text('startLiveness'),
+            ),
+          ],
         ),
       ),
     );
