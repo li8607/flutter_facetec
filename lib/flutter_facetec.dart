@@ -16,4 +16,8 @@ class FlutterFacetec {
   Future<bool?> startLiveness() {
     return FlutterFacetecPlatform.instance.startLiveness();
   }
+
+  Future<bool?> setLocale(String language, String country) {
+    return FlutterFacetecPlatform.instance.setLocale(language, country);
+  }
 }

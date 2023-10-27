@@ -20,7 +20,7 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
   Future<bool?> initialize(String productionKeyText, String deviceKeyIdentifier,
       String publicFaceScanEncryptionKey, String baseUrl, String token,
       {bool productionMode = false}) async {
-    final version = await methodChannel.invokeMethod<bool?>('initialize', {
+    final result = await methodChannel.invokeMethod<bool?>('initialize', {
       "productionKeyText": productionKeyText,
       "deviceKeyIdentifier": deviceKeyIdentifier,
       "publicFaceScanEncryptionKey": publicFaceScanEncryptionKey,
@@ -28,12 +28,21 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
       "token": token,
       "productionMode": productionMode,
     });
-    return version;
+    return result;
   }
 
   @override
   Future<bool?> startLiveness() async {
-    final version = await methodChannel.invokeMethod<bool?>('startLiveness');
-    return version;
+    final result = await methodChannel.invokeMethod<bool?>('startLiveness');
+    return result;
+  }
+
+  @override
+  Future<bool?> setLocale(String language, String country) async {
+    final result = await methodChannel.invokeMethod<bool?>('setLocale', {
+      "language": language,
+      "country": country,
+    });
+    return result;
   }
 }

@@ -34,4 +34,8 @@ abstract class FlutterFacetecPlatform extends PlatformInterface {
   Future<bool?> startLiveness() {
     throw UnimplementedError('startLiveness() has not been implemented.');
   }
+
+  Future<bool?> setLocale(String language, String country) {
+     throw UnimplementedError('setLocale() has not been implemented.');
+  }
 }

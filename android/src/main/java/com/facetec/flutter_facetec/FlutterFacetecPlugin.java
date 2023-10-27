@@ -3,6 +3,7 @@ package com.facetec.flutter_facetec;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -83,11 +85,34 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
       }else {
         initializeInDevelopmentMode(deviceKeyIdentifier, publicFaceScanEncryptionKey, result);
       }
-    }  else if (call.method.equals("startLiveness")) {
+    } else if (call.method.equals("startLiveness")) {
       startLiveness(result);
-    } else {
+    } else if (call.method.equals("setLocale")) {
+      String language = call.argument("language");
+      String country =  call.argument("country");
+      setLocale(language, country);
+      result.success(true);
+    }else {
       result.notImplemented();
     }
+  }
+
+  private void setLocale(String language, String country) {
+    // Override application language with the selected locale
+    Locale locale;
+    if(country!=null && !country.isEmpty()) {
+      locale = new Locale(language, country);
+    }else {
+      locale = new Locale(language);
+    }
+    Configuration config = activity.getResources().getConfiguration();
+    config.setLocale(locale);
+
+// Update current activity's configuration
+    activity.getResources().updateConfiguration(config, activity.getResources().getDisplayMetrics());
+
+// Update application's configuration so the FaceTec SDK will be updated
+    activity.getApplicationContext().getResources().updateConfiguration(config, activity.getResources().getDisplayMetrics());
   }
 
   @Override
