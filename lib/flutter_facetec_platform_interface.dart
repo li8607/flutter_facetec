@@ -27,11 +27,11 @@ abstract class FlutterFacetecPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<bool?> initialize(String deviceKeyIdentifier, String publicFaceScanEncryptionKey) {
+  Future<bool?> initialize(String productionKeyText, String deviceKeyIdentifier, String publicFaceScanEncryptionKey, String baseUrl, String token, {bool productionMode = false}) {
     throw UnimplementedError('initialize() has not been implemented.');
   }
 
-  Future<String?> startLiveness() {
+  Future<bool?> startLiveness() {
     throw UnimplementedError('startLiveness() has not been implemented.');
   }
 }

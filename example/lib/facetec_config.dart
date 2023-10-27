@@ -1,6 +1,7 @@
 class FaceTecConfig {
   // Available at https://dev.facetec.com/account
-  static const String deviceKeyIdentifier = "	djhfImdG2GSJQKlZTd5CebKsJCzxkOPm";
+  // static const String deviceKeyIdentifier = "djhfImdG2GSJQKlZTd5CebKsJCzxkOPm";
+  static const String deviceKeyIdentifier = "dRkFNgBZNg83sA3zWQ5ZQdiHSCd4SIR8";
 
   // The FaceScan Encryption Key you define for your application.
   // Please see https://dev.facetec.com/facemap-encryption-keys for more information.
@@ -14,4 +15,6 @@ GJD4GIVvR+j12gXAaftj3ahfYxioBH7F7HQxzmWkwDyn3bqU54eaiB7f0ftsPpWM
 ceUaqkL2DZUvgN0efEJjnWy5y1/Gkq5GGWCROI9XG/SwXJ30BbVUehTbVcD70+ZF
 8QIDAQAB
 -----END PUBLIC KEY-----''';
+
+  static const String baseURL = "https://api.facetec.com/api/v3.1/biometrics";
 }

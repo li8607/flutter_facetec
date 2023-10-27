@@ -17,18 +17,23 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
   }
 
   @override
-  Future<bool?> initialize(
-      String deviceKeyIdentifier, String publicFaceScanEncryptionKey) async {
+  Future<bool?> initialize(String productionKeyText, String deviceKeyIdentifier,
+      String publicFaceScanEncryptionKey, String baseUrl, String token,
+      {bool productionMode = false}) async {
     final version = await methodChannel.invokeMethod<bool?>('initialize', {
+      "productionKeyText": productionKeyText,
       "deviceKeyIdentifier": deviceKeyIdentifier,
       "publicFaceScanEncryptionKey": publicFaceScanEncryptionKey,
+      "baseUrl": baseUrl,
+      "token": token,
+      "productionMode": productionMode,
     });
     return version;
   }
 
   @override
-  Future<String?> startLiveness() async {
-    final version = await methodChannel.invokeMethod<String?>('startLiveness');
+  Future<bool?> startLiveness() async {
+    final version = await methodChannel.invokeMethod<bool?>('startLiveness');
     return version;
   }
 }

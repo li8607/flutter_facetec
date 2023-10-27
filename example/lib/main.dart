@@ -62,8 +62,12 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(
               onPressed: () async {
                 final result2 = await _flutterFacetecPlugin.initialize(
-                    FaceTecConfig.deviceKeyIdentifier,
-                    FaceTecConfig.publicFaceScanEncryptionKey);
+                  "",
+                  FaceTecConfig.deviceKeyIdentifier,
+                  FaceTecConfig.publicFaceScanEncryptionKey,
+                  FaceTecConfig.baseURL,
+                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3YWxsZXQiOiIweDIyMDQ1QzRENUI0ODM2ZjFGMTZkQ0NBMUE4QzJFYjdhNzkwNjQ0NDciLCJuaWNrbmFtZSI6ImFnZ2llIiwiaWQiOiI2NGRmMzJhYzhmMTU3NzU5YTczMGZmNmQiLCJleHAiOjE2OTg5NzgxOTEsImlhdCI6MTY5ODM3MzM5MSwidXNlcm5hbWUiOiJhZ2dpZSJ9.Bf6uGGgf7oJkwzCcPRQGpDzobwXUwW9m75yQW8DVN3o",
+                );
                 print("reuslt = $result2");
               },
               child: const Text('Initialize'),
