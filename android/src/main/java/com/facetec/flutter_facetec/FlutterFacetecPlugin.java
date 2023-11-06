@@ -51,14 +51,6 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
   private MethodChannel channel;
   private Activity activity;
 
-  private String baseUrl;
-
-  private String deviceKeyIdentifier;
-
-  private String publicFaceScanEncryptionKey;
-
-  private String token;
-
   public Processor latestProcessor;
 
   private static Result pendingCallbackContext = null;
@@ -71,28 +63,25 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    if (call.method.equals("getPlatformVersion")) {
-      result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else if (call.method.equals("initialize")) {
-      deviceKeyIdentifier = call.argument("deviceKeyIdentifier");
-      publicFaceScanEncryptionKey = call.argument("publicFaceScanEncryptionKey");
-      baseUrl = call.argument("baseUrl");
-      token =  call.argument("token");
-      boolean productionMode = call.argument("productionMode");
-      if(productionMode) {
-        String productionKeyText =  call.argument("productionKeyText");
-        initializeInProductionMode(productionKeyText, deviceKeyIdentifier, publicFaceScanEncryptionKey, result);
-      }else {
-        initializeInDevelopmentMode(deviceKeyIdentifier, publicFaceScanEncryptionKey, result);
-      }
+    if (call.method.equals("initialize")) {
+      String deviceKeyIdentifier = call.argument("deviceKeyIdentifier");
+      String publicFaceScanEncryptionKey = call.argument("publicFaceScanEncryptionKey");
+      String productionKeyText =  call.argument("productionKeyText");
+      initializeInProductionMode(productionKeyText, deviceKeyIdentifier, publicFaceScanEncryptionKey, result);
     } else if (call.method.equals("startLiveness")) {
-      startLiveness(result);
+      String deviceKeyIdentifier = call.argument("deviceKeyIdentifier");
+      String baseUrl =  call.argument("baseUrl");
+      startLiveness(baseUrl, deviceKeyIdentifier, result);
     } else if (call.method.equals("setLocale")) {
       String language = call.argument("language");
       String country =  call.argument("country");
       setLocale(language, country);
       result.success(true);
-    }else {
+    } else  if (call.method.equals("initializeInDevelopmentMode")) {
+      String deviceKeyIdentifier = call.argument("deviceKeyIdentifier");
+      String publicFaceScanEncryptionKey = call.argument("publicFaceScanEncryptionKey");
+      initializeInDevelopmentMode(deviceKeyIdentifier, publicFaceScanEncryptionKey, result);
+    } else {
       result.notImplemented();
     }
   }
@@ -134,7 +123,6 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
       }
     });
   }
-
   private void initializeInProductionMode(String productionKeyText, String deviceKeyIdentifier, String publicFaceScanEncryptionKey, MethodChannel.Result result) {
     FaceTecSDK.initializeInProductionMode(activity, productionKeyText, deviceKeyIdentifier, publicFaceScanEncryptionKey, new FaceTecSDK.InitializeCallback() {
       @Override
@@ -150,15 +138,15 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
     });
   }
 //
-  private void startLiveness(MethodChannel.Result result) {
+  private void startLiveness(String baseUrl, String  deviceKeyIdentifier, MethodChannel.Result result) {
     pendingCallbackContext = new MethodResultWrapper(result);
     activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        getSessionToken(new SessionTokenCallback() {
+        getSessionToken(baseUrl, deviceKeyIdentifier, new SessionTokenCallback() {
           @Override
           public void onSessionTokenReceived(String sessionToken) {
-            latestProcessor = new LivenessCheckProcessor("", activity, baseUrl, deviceKeyIdentifier, token);
+            latestProcessor = new LivenessCheckProcessor(sessionToken, activity, baseUrl, deviceKeyIdentifier);
           }
 
           @Override
@@ -224,7 +212,7 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
     void onSessionTokenFailed(int errorCode, String errorMessage);
   }
 
-  public void getSessionToken(final SessionTokenCallback sessionTokenCallback) {
+  public void getSessionToken( String baseUrl, String deviceKeyIdentifier, final SessionTokenCallback sessionTokenCallback) {
     // Do the network call and handle result
     okhttp3.Request request = new okhttp3.Request.Builder()
             .header("X-Device-Key", deviceKeyIdentifier)

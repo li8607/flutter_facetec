@@ -10,30 +10,23 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
   final methodChannel = const MethodChannel('flutter_facetec');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
-  }
-
-  @override
   Future<bool?> initialize(String productionKeyText, String deviceKeyIdentifier,
-      String publicFaceScanEncryptionKey, String baseUrl, String token,
-      {bool productionMode = false}) async {
+      String publicFaceScanEncryptionKey) async {
     final result = await methodChannel.invokeMethod<bool?>('initialize', {
       "productionKeyText": productionKeyText,
       "deviceKeyIdentifier": deviceKeyIdentifier,
       "publicFaceScanEncryptionKey": publicFaceScanEncryptionKey,
-      "baseUrl": baseUrl,
-      "token": token,
-      "productionMode": productionMode,
     });
     return result;
   }
 
   @override
-  Future<bool?> startLiveness() async {
-    final result = await methodChannel.invokeMethod<bool?>('startLiveness');
+  Future<bool?> startLiveness(
+      String baseUrl, String deviceKeyIdentifier) async {
+    final result = await methodChannel.invokeMethod<bool?>('startLiveness', {
+      "baseUrl": baseUrl,
+      "deviceKeyIdentifier": deviceKeyIdentifier,
+    });
     return result;
   }
 
@@ -42,6 +35,15 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
     final result = await methodChannel.invokeMethod<bool?>('setLocale', {
       "language": language,
       "country": country,
+    });
+    return result;
+  }
+
+  @override
+  Future<bool?> initializeInDevelopmentMode(String deviceKeyIdentifier, String publicFaceScanEncryptionKey) async {
+     final result = await methodChannel.invokeMethod<bool?>('initializeInDevelopmentMode', {
+      "deviceKeyIdentifier": deviceKeyIdentifier,
+      "publicFaceScanEncryptionKey": publicFaceScanEncryptionKey,
     });
     return result;
   }

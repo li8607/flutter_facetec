@@ -43,13 +43,10 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
 
     private String licenseKey;
 
-    private String token;
-
-    public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey, String token) {
+    public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey) {
         this.activity =  activity;
         this.baseUrl = baseUrl;
         this.licenseKey = licenseKey;
-        this.token = token;
 
         // Part 1:  Starting the FaceTec Session
         //
