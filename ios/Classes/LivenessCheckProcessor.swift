@@ -13,8 +13,12 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
     var success = false
     var fromViewController: UIViewController!
     var faceScanResultCallback: FaceTecFaceScanResultCallback!
+    var baseUrl: String!
+    var deviceKeyIdentifier: String!
     
-    init(sessionToken: String, fromViewController: UIViewController) {
+    init(baseUrl: String, deviceKeyIdentifier: String, sessionToken: String, fromViewController: UIViewController) {
+        self.baseUrl = baseUrl
+        self.deviceKeyIdentifier = deviceKeyIdentifier
         self.fromViewController = fromViewController
         super.init()
         
@@ -69,11 +73,11 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
         //
         // Part 5:  Make the Networking Call to Your Servers.  Below is just example code, you are free to customize based on how your own API works.
         //
-        var request = URLRequest(url: NSURL(string: Config.BaseURL + "/liveness-3d")! as URL)
+        var request = URLRequest(url: NSURL(string: baseUrl + "/liveness-3d")! as URL)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try! JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions(rawValue: 0))
-        request.addValue(Config.DeviceKeyIdentifier, forHTTPHeaderField: "X-Device-Key")
+        request.addValue(deviceKeyIdentifier, forHTTPHeaderField: "X-Device-Key")
         request.addValue(FaceTec.sdk.createFaceTecAPIUserAgentString(sessionResult.sessionId), forHTTPHeaderField: "User-Agent")
         request.addValue(FaceTec.sdk.createFaceTecAPIUserAgentString(sessionResult.sessionId), forHTTPHeaderField: "X-User-Agent")
 
