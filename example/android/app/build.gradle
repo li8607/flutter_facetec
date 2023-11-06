@@ -60,7 +60,7 @@ android {
     // FaceTecSDK: Add dependencies for native library
     dependencies {
         // Add your facetec-sdk .aar file to app/libs.
-        implementation (files("libs/facetec-sdk-9.6.54.aar"))
+        implementation (files("libs/facetec-sdk-9.6.55.aar"))
         implementation 'androidx.appcompat:appcompat:1.6.1'
         implementation 'androidx.multidex:multidex:2.0.1'
     }
