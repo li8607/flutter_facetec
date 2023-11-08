@@ -10,7 +10,7 @@ class FlutterFacetec {
     );
   }
 
-  Future<bool?> startLiveness(String baseUrl, String deviceKeyIdentifier) {
+  Future<String?> startLiveness(String baseUrl, String deviceKeyIdentifier) {
     return FlutterFacetecPlatform.instance
         .startLiveness(baseUrl, deviceKeyIdentifier);
   }

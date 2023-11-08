@@ -21,9 +21,9 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
   }
 
   @override
-  Future<bool?> startLiveness(
+  Future<String?> startLiveness(
       String baseUrl, String deviceKeyIdentifier) async {
-    final result = await methodChannel.invokeMethod<bool?>('startLiveness', {
+    final result = await methodChannel.invokeMethod<String?>('startLiveness', {
       "baseUrl": baseUrl,
       "deviceKeyIdentifier": deviceKeyIdentifier,
     });

@@ -43,6 +43,8 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
 
     private String licenseKey;
 
+    private String faceScan;
+
     public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey) {
         this.activity =  activity;
         this.baseUrl = baseUrl;
@@ -148,6 +150,7 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
 
                         // In v9.2.0+, simply pass in scanResultBlob to the proceedToNextStep function to advance the User flow.
                         // scanResultBlob is a proprietary, encrypted blob that controls the logic for what happens next for the User.
+                        faceScan = sessionResult.getFaceScanBase64();
                         success = faceScanResultCallback.proceedToNextStep(scanResultBlob, FaceTecIDScanNextStep.SKIP);
                     }
                     else {
@@ -174,5 +177,9 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
 
     public boolean isSuccess() {
         return this.success;
+    }
+
+    public String faceScan() {
+        return this.faceScan;
     }
 }
