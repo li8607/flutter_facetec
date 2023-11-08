@@ -33,7 +33,8 @@ abstract class FlutterFacetecPlatform extends PlatformInterface {
     throw UnimplementedError('initialize() has not been implemented.');
   }
 
-  Future<String?> startLiveness(String baseUrl, String deviceKeyIdentifier) {
+  Future<String?> startLiveness(String baseUrl, String deviceKeyIdentifier,
+      String externalDatabaseRefID) {
     throw UnimplementedError('startLiveness() has not been implemented.');
   }
 

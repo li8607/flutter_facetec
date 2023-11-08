@@ -42,8 +42,8 @@ class _MyAppState extends State<MyApp> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await _flutterFacetecPlugin.startLiveness(
-                    FaceTecConfig.baseURL, FaceTecConfig.deviceKeyIdentifier);
+                await _flutterFacetecPlugin.startLiveness(FaceTecConfig.baseURL,
+                    FaceTecConfig.deviceKeyIdentifier, "testtesttest");
               },
               child: const Text('startLiveness'),
             ),

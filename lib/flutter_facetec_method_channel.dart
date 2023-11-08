@@ -21,11 +21,12 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
   }
 
   @override
-  Future<String?> startLiveness(
-      String baseUrl, String deviceKeyIdentifier) async {
+  Future<String?> startLiveness(String baseUrl, String deviceKeyIdentifier,
+      String externalDatabaseRefID) async {
     final result = await methodChannel.invokeMethod<String?>('startLiveness', {
       "baseUrl": baseUrl,
       "deviceKeyIdentifier": deviceKeyIdentifier,
+      "externalDatabaseRefID": externalDatabaseRefID,
     });
     return result;
   }
@@ -40,8 +41,10 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
   }
 
   @override
-  Future<bool?> initializeInDevelopmentMode(String deviceKeyIdentifier, String publicFaceScanEncryptionKey) async {
-     final result = await methodChannel.invokeMethod<bool?>('initializeInDevelopmentMode', {
+  Future<bool?> initializeInDevelopmentMode(
+      String deviceKeyIdentifier, String publicFaceScanEncryptionKey) async {
+    final result =
+        await methodChannel.invokeMethod<bool?>('initializeInDevelopmentMode', {
       "deviceKeyIdentifier": deviceKeyIdentifier,
       "publicFaceScanEncryptionKey": publicFaceScanEncryptionKey,
     });

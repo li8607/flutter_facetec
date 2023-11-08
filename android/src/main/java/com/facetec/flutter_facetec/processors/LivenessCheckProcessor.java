@@ -45,10 +45,13 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
 
     private String faceScan;
 
-    public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey) {
+    private String externalDatabaseRefID;
+
+    public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey, String externalDatabaseRefID) {
         this.activity =  activity;
         this.baseUrl = baseUrl;
         this.licenseKey = licenseKey;
+        this.externalDatabaseRefID = externalDatabaseRefID;
 
         // Part 1:  Starting the FaceTec Session
         //
@@ -91,6 +94,8 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
             parameters.put("faceScan", sessionResult.getFaceScanBase64());
             parameters.put("auditTrailImage", sessionResult.getAuditTrailCompressedBase64()[0]);
             parameters.put("lowQualityAuditTrailImage", sessionResult.getLowQualityAuditTrailCompressedBase64()[0]);
+            parameters.put("externalDatabaseRefID", externalDatabaseRefID);
+
         }
         catch(JSONException e) {
             e.printStackTrace();
@@ -102,7 +107,7 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
         // Part 5:  Make the Networking Call to Your Servers.  Below is just example code, you are free to customize based on how your own API works.
         //
         okhttp3.Request request = new okhttp3.Request.Builder()
-            .url(baseUrl + "/liveness-3d")
+            .url(baseUrl + "/enrollment-3d")
             .header("Content-Type", "application/json")
             .header("X-Device-Key", licenseKey)
             .header("User-Agent", FaceTecSDK.createFaceTecAPIUserAgentString(sessionResult.getSessionId()))
