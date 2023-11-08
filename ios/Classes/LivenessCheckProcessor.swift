@@ -9,17 +9,25 @@ import FaceTecSDK
 // This is an example self-contained class to perform Liveness Checks with the FaceTec SDK.
 // You may choose to further componentize parts of this in your own Apps based on your specific requirements.
 class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDelegate, URLSessionTaskDelegate {
+ 
     var latestNetworkRequest: URLSessionTask!
     var success = false
     var fromViewController: UIViewController!
     var faceScanResultCallback: FaceTecFaceScanResultCallback!
     var baseUrl: String!
     var deviceKeyIdentifier: String!
+    var faceScanData: String?
+    var externalDatabaseRefID: String!
+    var delegate: ProcessorDelegate!
+    var errorMsg: String?
+    var faceTecSessionResult: FaceTecSessionResult?
     
-    init(baseUrl: String, deviceKeyIdentifier: String, sessionToken: String, fromViewController: UIViewController) {
+    init(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, sessionToken: String, fromViewController: UIViewController, delegate: ProcessorDelegate) {
         self.baseUrl = baseUrl
         self.deviceKeyIdentifier = deviceKeyIdentifier
+        self.externalDatabaseRefID = externalDatabaseRefID
         self.fromViewController = fromViewController
+        self.delegate = delegate
         super.init()
         
         //
@@ -44,7 +52,7 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
         // DEVELOPER NOTE:  These properties are for demonstration purposes only so the Sample App can get information about what is happening in the processor.
         // In the code in your own App, you can pass around signals, flags, intermediates, and results however you would like.
         //
-        
+        self.faceTecSessionResult = sessionResult
         //
         // DEVELOPER NOTE:  A reference to the callback is stored as a class variable so that we can have access to it while performing the Upload and updating progress.
         //
@@ -69,11 +77,12 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
         parameters["faceScan"] = sessionResult.faceScanBase64
         parameters["auditTrailImage"] = sessionResult.auditTrailCompressedBase64![0]
         parameters["lowQualityAuditTrailImage"] = sessionResult.lowQualityAuditTrailCompressedBase64![0]
+        parameters["externalDatabaseRefID"] = externalDatabaseRefID
         
         //
         // Part 5:  Make the Networking Call to Your Servers.  Below is just example code, you are free to customize based on how your own API works.
         //
-        var request = URLRequest(url: NSURL(string: baseUrl + "/liveness-3d")! as URL)
+        var request = URLRequest(url: NSURL(string: baseUrl + "/enrollment-3d")! as URL)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try! JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions(rawValue: 0))
@@ -118,6 +127,7 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
                 
                 // In v9.2.0+, simply pass in scanResultBlob to the proceedToNextStep function to advance the User flow.
                 // scanResultBlob is a proprietary, encrypted blob that controls the logic for what happens next for the User.
+                self.faceScanData = sessionResult.faceScanBase64
                 self.success = faceScanResultCallback.onFaceScanGoToNextStep(scanResultBlob: scanResultBlob)
             }
             else {
@@ -162,9 +172,14 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
         // In your code, you will handle what to do after the Liveness Check is successful here.
         // In our example code here, to keep the code in this class simple, we will call a static method on another class to update the Sample App UI.
 //        self.fromViewController.onComplete();
+        self.delegate.onProcessingComplete(isSuccess: self.success, faceTecSessionResult: self.faceTecSessionResult, errorMsg: errorMsg)
     }
     
     func isSuccess() -> Bool {
         return success
+    }
+    
+    func faceScan() -> String? {
+        return faceScanData
     }
 }

@@ -2,11 +2,11 @@ import Flutter
 import UIKit
 import FaceTecSDK
 
-public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate  {
-    
-    
+public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, ProcessorDelegate  {
+  
   var latestSessionResult: FaceTecSessionResult!
   var latestProcessor: Processor!
+  var  pendingResult: FlutterResult?
     
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "flutter_facetec", binaryMessenger: registrar.messenger())
@@ -24,7 +24,7 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate  
         else {
             return result(FlutterError())
         }
-        initializeInDevelopmentMode(productionKeyText:productionKeyText, deviceKeyIdentifier: deviceKeyIdentifier, publicFaceScanEncryptionKey: faceScanEncryptionKey, result: result)
+        initializeInProductionMode(productionKeyText:productionKeyText, deviceKeyIdentifier: deviceKeyIdentifier, publicFaceScanEncryptionKey: faceScanEncryptionKey, result: result)
     case "setLocale":
         guard let args = call.arguments as? Dictionary<String, Any>,
               let language = args["language"] as? String,
@@ -36,11 +36,13 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate  
     case "startLiveness":
         guard let args = call.arguments as? Dictionary<String, Any>,
               let deviceKeyIdentifier = args["deviceKeyIdentifier"] as? String,
-              let baseUrl = args["baseUrl"] as? String
+              let baseUrl = args["baseUrl"] as? String,
+              let externalDatabaseRefID = args["externalDatabaseRefID"] as? String
         else {
             return result(FlutterError())
         }
-        return startLiveness(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier, result: result);
+        pendingResult = result
+        startLiveness(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier, externalDatabaseRefID: externalDatabaseRefID, result: result);
     case "initializeInDevelopmentMode":
         guard let args = call.arguments as? Dictionary<String, Any>,
               let deviceKeyIdentifier = args["deviceKeyIdentifier"] as? String,
@@ -59,7 +61,7 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate  
         result(true)
     }
     
-    private func initializeInDevelopmentMode(productionKeyText: String, deviceKeyIdentifier: String, publicFaceScanEncryptionKey: String, result: @escaping FlutterResult) {
+    private func initializeInProductionMode(productionKeyText: String, deviceKeyIdentifier: String, publicFaceScanEncryptionKey: String, result: @escaping FlutterResult) {
         
         var ftCustomization = FaceTecCustomization()
         ftCustomization.overlayCustomization.brandingImage = UIImage(named: "flutter_logo")
@@ -92,14 +94,25 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate  
         })
     }
     
-    private func startLiveness(baseUrl: String, deviceKeyIdentifier: String, result: @escaping FlutterResult) {
+    private func startLiveness(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, result: @escaping FlutterResult) {
         // Get a Session Token from the FaceTec SDK, then start the 3D Liveness Check.
         if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController {
             getSessionToken(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier) { sessionToken in
-                self.latestProcessor = LivenessCheckProcessor(baseUrl: baseUrl, deviceKeyIdentifier: deviceKeyIdentifier, sessionToken: sessionToken, fromViewController: rootViewController)
+                self.latestProcessor = LivenessCheckProcessor(baseUrl: baseUrl, deviceKeyIdentifier: deviceKeyIdentifier, externalDatabaseRefID:externalDatabaseRefID, sessionToken: sessionToken, fromViewController: rootViewController, delegate: self)
             }
         } else {
-            print("view not found")
+            result(FlutterError(code: "view not found", message: "view not found", details: nil))
+        }
+    }
+    
+    func onProcessingComplete(isSuccess: Bool, faceTecSessionResult: FaceTecSessionResult?, errorMsg: String?) {
+        if(pendingResult != nil && faceTecSessionResult != nil) {
+            if(isSuccess){
+                var faceScan = faceTecSessionResult!.faceScanBase64
+                pendingResult!(faceScan)
+            }else{
+                pendingResult!(FlutterError(code: "view not found", message: "view not found", details: nil))
+            }
         }
     }
     
