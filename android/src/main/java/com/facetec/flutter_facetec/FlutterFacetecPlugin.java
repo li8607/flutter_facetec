@@ -113,7 +113,7 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
   }
 
   private void initializeInDevelopmentMode(String deviceKeyIdentifier, String publicFaceScanEncryptionKey, MethodChannel.Result result) {
-    Config.retrieveConfigurationWizardCustomization();
+    FaceTecSDK.setCustomization(Config.retrieveConfigurationWizardCustomization());
     FaceTecSDK.initializeInDevelopmentMode(activity, deviceKeyIdentifier, publicFaceScanEncryptionKey, new FaceTecSDK.InitializeCallback() {
       @Override
       public void onCompletion(boolean success) {
@@ -128,7 +128,7 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
     });
   }
   private void initializeInProductionMode(String productionKeyText, String deviceKeyIdentifier, String publicFaceScanEncryptionKey, MethodChannel.Result result) {
-    Config.retrieveConfigurationWizardCustomization();
+    FaceTecSDK.setCustomization(Config.retrieveConfigurationWizardCustomization());
     FaceTecSDK.initializeInProductionMode(activity, productionKeyText, deviceKeyIdentifier, publicFaceScanEncryptionKey, new FaceTecSDK.InitializeCallback() {
       @Override
       public void onCompletion(boolean success) {
