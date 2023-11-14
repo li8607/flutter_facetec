@@ -28,21 +28,23 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
     case "setLocale":
         guard let args = call.arguments as? Dictionary<String, Any>,
               let language = args["language"] as? String,
-              let _ = args["country"] as? String?
+              let country = args["country"] as? String?
         else {
             return result(FlutterError())
         }
-        setLocale(language: language, result: result)
+        setLocale(language: language, country: country, result: result)
     case "startLiveness":
         guard let args = call.arguments as? Dictionary<String, Any>,
               let deviceKeyIdentifier = args["deviceKeyIdentifier"] as? String,
               let baseUrl = args["baseUrl"] as? String,
-              let externalDatabaseRefID = args["externalDatabaseRefID"] as? String
+              let externalDatabaseRefID = args["externalDatabaseRefID"] as? String,
+              let token = args["token"] as? String
         else {
             return result(FlutterError())
         }
+        
         pendingResult = result
-        startLiveness(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier, externalDatabaseRefID: externalDatabaseRefID, result: result);
+        startLiveness(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier, externalDatabaseRefID: externalDatabaseRefID, token:token, result: result);
     case "initializeInDevelopmentMode":
         guard let args = call.arguments as? Dictionary<String, Any>,
               let deviceKeyIdentifier = args["deviceKeyIdentifier"] as? String,
@@ -56,8 +58,12 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
     }
   }
     
-    private func setLocale(language: String, result: @escaping FlutterResult) {
-        FaceTec.sdk.setLanguage(language)
+    private func setLocale(language: String, country: String?, result: @escaping FlutterResult) {
+        if(country==nil) {
+            FaceTec.sdk.setLanguage(language)
+        } else {
+            FaceTec.sdk.setLanguage(language + "-" + country!)
+        }
         result(true)
     }
     
@@ -94,11 +100,11 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
         })
     }
     
-    private func startLiveness(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, result: @escaping FlutterResult) {
+    private func startLiveness(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, token: String, result: @escaping FlutterResult) {
         // Get a Session Token from the FaceTec SDK, then start the 3D Liveness Check.
         if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController {
-            getSessionToken(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier) { sessionToken in
-                self.latestProcessor = LivenessCheckProcessor(baseUrl: baseUrl, deviceKeyIdentifier: deviceKeyIdentifier, externalDatabaseRefID:externalDatabaseRefID, sessionToken: sessionToken, fromViewController: rootViewController, delegate: self)
+            getSessionToken(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier, token:token) { sessionToken in
+                self.latestProcessor = LivenessCheckProcessor(baseUrl: baseUrl, deviceKeyIdentifier: deviceKeyIdentifier, externalDatabaseRefID:externalDatabaseRefID, sessionToken: sessionToken, token: token, fromViewController: rootViewController, delegate: self)
             }
         } else {
             result(FlutterError(code: "view not found", message: "view not found", details: nil))
@@ -116,7 +122,7 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
         }
     }
     
-    func getSessionToken(baseUrl: String, deviceKeyIdentifier: String, sessionTokenCallback: @escaping (String) -> ()) {
+    func getSessionToken(baseUrl: String, deviceKeyIdentifier: String, token: String, sessionTokenCallback: @escaping (String) -> ()) {
         let endpoint = baseUrl + "/session-token"
         let request = NSMutableURLRequest(url: NSURL(string: endpoint)! as URL)
         request.httpMethod = "GET"
@@ -124,6 +130,7 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
         request.addValue(deviceKeyIdentifier, forHTTPHeaderField: "X-Device-Key")
         request.addValue(FaceTec.sdk.createFaceTecAPIUserAgentString(""), forHTTPHeaderField: "User-Agent")
         request.addValue(FaceTec.sdk.createFaceTecAPIUserAgentString(""), forHTTPHeaderField: "X-User-Agent")
+        request.addValue(token, forHTTPHeaderField: "token")
 
         let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: request as URLRequest, completionHandler: { data, response, error in

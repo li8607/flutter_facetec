@@ -21,13 +21,15 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
     var delegate: ProcessorDelegate!
     var errorMsg: String?
     var faceTecSessionResult: FaceTecSessionResult?
+    var token: String
     
-    init(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, sessionToken: String, fromViewController: UIViewController, delegate: ProcessorDelegate) {
+    init(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, sessionToken: String, token: String, fromViewController: UIViewController, delegate: ProcessorDelegate) {
         self.baseUrl = baseUrl
         self.deviceKeyIdentifier = deviceKeyIdentifier
         self.externalDatabaseRefID = externalDatabaseRefID
         self.fromViewController = fromViewController
         self.delegate = delegate
+        self.token = token
         super.init()
         
         //
@@ -89,6 +91,7 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
         request.addValue(deviceKeyIdentifier, forHTTPHeaderField: "X-Device-Key")
         request.addValue(FaceTec.sdk.createFaceTecAPIUserAgentString(sessionResult.sessionId), forHTTPHeaderField: "User-Agent")
         request.addValue(FaceTec.sdk.createFaceTecAPIUserAgentString(sessionResult.sessionId), forHTTPHeaderField: "X-User-Agent")
+        request.addValue(token, forHTTPHeaderField: "token")
 
         let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
         latestNetworkRequest = session.dataTask(with: request as URLRequest, completionHandler: { data, response, error in

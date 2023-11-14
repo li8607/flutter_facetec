@@ -11,9 +11,9 @@ class FlutterFacetec {
   }
 
   Future<String?> startLiveness(String baseUrl, String deviceKeyIdentifier,
-      String externalDatabaseRefID) {
+      String externalDatabaseRefID, String token) {
     return FlutterFacetecPlatform.instance
-        .startLiveness(baseUrl, deviceKeyIdentifier, externalDatabaseRefID);
+        .startLiveness(baseUrl, deviceKeyIdentifier, externalDatabaseRefID, token);
   }
 
   Future<bool?> setLocale(String language, String country) {
