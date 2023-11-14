@@ -69,7 +69,7 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
     
     private func initializeInProductionMode(productionKeyText: String, deviceKeyIdentifier: String, publicFaceScanEncryptionKey: String, result: @escaping FlutterResult) {
         
-        var ftCustomization = FaceTecCustomization()
+        var ftCustomization = Config.retrieveConfigurationWizardCustomization()
         ftCustomization.overlayCustomization.brandingImage = UIImage(named: "flutter_logo")
         FaceTec.sdk.setCustomization(ftCustomization)
         FaceTec.sdk.initializeInProductionMode(productionKeyText: productionKeyText, deviceKeyIdentifier: deviceKeyIdentifier, faceScanEncryptionKey: publicFaceScanEncryptionKey, completion: { initializationSuccessful in
@@ -85,7 +85,7 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
     
     private func initializeInDevelopmentMode(deviceKeyIdentifier: String, publicFaceScanEncryptionKey: String, result: @escaping FlutterResult) {
         
-        var ftCustomization = FaceTecCustomization()
+        var ftCustomization = Config.retrieveConfigurationWizardCustomization()
         ftCustomization.overlayCustomization.brandingImage = UIImage(named: "flutter_logo")
         FaceTec.sdk.setCustomization(ftCustomization)
         
