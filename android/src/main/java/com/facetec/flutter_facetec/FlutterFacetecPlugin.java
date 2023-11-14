@@ -72,7 +72,8 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
       String deviceKeyIdentifier = call.argument("deviceKeyIdentifier");
       String baseUrl =  call.argument("baseUrl");
       String externalDatabaseRefID = call.argument("externalDatabaseRefID");
-      startLiveness(baseUrl, deviceKeyIdentifier, externalDatabaseRefID, result);
+      String token = call.argument("token");
+      startLiveness(baseUrl, deviceKeyIdentifier, externalDatabaseRefID, token, result);
     } else if (call.method.equals("setLocale")) {
       String language = call.argument("language");
       String country =  call.argument("country");
@@ -139,15 +140,15 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
     });
   }
 //
-  private void startLiveness(String baseUrl, String  deviceKeyIdentifier, String externalDatabaseRefID, MethodChannel.Result result) {
+  private void startLiveness(String baseUrl, String  deviceKeyIdentifier, String externalDatabaseRefID, String token, MethodChannel.Result result) {
     pendingCallbackContext = new MethodResultWrapper(result);
     activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        getSessionToken(baseUrl, deviceKeyIdentifier, new SessionTokenCallback() {
+        getSessionToken(baseUrl, deviceKeyIdentifier, token, new SessionTokenCallback() {
           @Override
           public void onSessionTokenReceived(String sessionToken) {
-            latestProcessor = new LivenessCheckProcessor(sessionToken, activity, baseUrl, deviceKeyIdentifier, externalDatabaseRefID);
+            latestProcessor = new LivenessCheckProcessor(sessionToken, activity, baseUrl, deviceKeyIdentifier, externalDatabaseRefID, token);
           }
 
           @Override
@@ -213,12 +214,13 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
     void onSessionTokenFailed(int errorCode, String errorMessage);
   }
 
-  public void getSessionToken( String baseUrl, String deviceKeyIdentifier, final SessionTokenCallback sessionTokenCallback) {
+  public void getSessionToken( String baseUrl, String deviceKeyIdentifier, String token, final SessionTokenCallback sessionTokenCallback) {
     // Do the network call and handle result
     okhttp3.Request request = new okhttp3.Request.Builder()
             .header("X-Device-Key", deviceKeyIdentifier)
             .header("User-Agent", FaceTecSDK.createFaceTecAPIUserAgentString(""))
             .header("X-User-Agent", FaceTecSDK.createFaceTecAPIUserAgentString(""))
+            .header("token", token)
             .url(baseUrl + "/session-token")
             .get()
             .build();

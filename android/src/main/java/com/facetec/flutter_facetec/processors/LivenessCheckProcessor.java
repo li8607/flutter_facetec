@@ -47,11 +47,14 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
 
     private String externalDatabaseRefID;
 
-    public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey, String externalDatabaseRefID) {
+    private String token;
+
+    public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey, String externalDatabaseRefID, String token) {
         this.activity =  activity;
         this.baseUrl = baseUrl;
         this.licenseKey = licenseKey;
         this.externalDatabaseRefID = externalDatabaseRefID;
+        this.token = token;
 
         // Part 1:  Starting the FaceTec Session
         //
@@ -112,6 +115,7 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
             .header("X-Device-Key", licenseKey)
             .header("User-Agent", FaceTecSDK.createFaceTecAPIUserAgentString(sessionResult.getSessionId()))
             .header("X-User-Agent", FaceTecSDK.createFaceTecAPIUserAgentString(sessionResult.getSessionId()))
+            .header("token", token)
 
             //
             // Part 7:  Demonstrates updating the Progress Bar based on the progress event.
