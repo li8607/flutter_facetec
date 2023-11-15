@@ -46,7 +46,8 @@ class _MyAppState extends State<MyApp> {
                     FaceTecConfig.baseURL,
                     FaceTecConfig.deviceKeyIdentifier,
                     "testtesttest",
-                    "123213");
+                    "123213",
+                    "successMessage");
               },
               child: const Text('startLiveness'),
             ),

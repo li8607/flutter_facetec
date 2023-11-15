@@ -38,13 +38,14 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
               let deviceKeyIdentifier = args["deviceKeyIdentifier"] as? String,
               let baseUrl = args["baseUrl"] as? String,
               let externalDatabaseRefID = args["externalDatabaseRefID"] as? String,
-              let token = args["token"] as? String
+              let token = args["token"] as? String,
+              let successMessage = args["successMessage"] as? String
         else {
             return result(FlutterError())
         }
         
         pendingResult = result
-        startLiveness(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier, externalDatabaseRefID: externalDatabaseRefID, token:token, result: result);
+        startLiveness(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier, externalDatabaseRefID: externalDatabaseRefID, token:token, successMessage: successMessage, result: result);
     case "initializeInDevelopmentMode":
         guard let args = call.arguments as? Dictionary<String, Any>,
               let deviceKeyIdentifier = args["deviceKeyIdentifier"] as? String,
@@ -100,11 +101,11 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
         })
     }
     
-    private func startLiveness(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, token: String, result: @escaping FlutterResult) {
+    private func startLiveness(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, token: String, successMessage: String, result: @escaping FlutterResult) {
         // Get a Session Token from the FaceTec SDK, then start the 3D Liveness Check.
         if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController {
             getSessionToken(baseUrl:baseUrl, deviceKeyIdentifier:deviceKeyIdentifier, token:token) { sessionToken in
-                self.latestProcessor = LivenessCheckProcessor(baseUrl: baseUrl, deviceKeyIdentifier: deviceKeyIdentifier, externalDatabaseRefID:externalDatabaseRefID, sessionToken: sessionToken, token: token, fromViewController: rootViewController, delegate: self)
+                self.latestProcessor = LivenessCheckProcessor(baseUrl: baseUrl, deviceKeyIdentifier: deviceKeyIdentifier, externalDatabaseRefID:externalDatabaseRefID, sessionToken: sessionToken, token: token, successMessage: successMessage, fromViewController: rootViewController, delegate: self)
             }
         } else {
             result(FlutterError(code: "view not found", message: "view not found", details: nil))

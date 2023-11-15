@@ -22,14 +22,16 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
     var errorMsg: String?
     var faceTecSessionResult: FaceTecSessionResult?
     var token: String
+    var successMessage: String
     
-    init(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, sessionToken: String, token: String, fromViewController: UIViewController, delegate: ProcessorDelegate) {
+    init(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, sessionToken: String, token: String, successMessage: String, fromViewController: UIViewController, delegate: ProcessorDelegate) {
         self.baseUrl = baseUrl
         self.deviceKeyIdentifier = deviceKeyIdentifier
         self.externalDatabaseRefID = externalDatabaseRefID
         self.fromViewController = fromViewController
         self.delegate = delegate
         self.token = token
+        self.successMessage = successMessage
         super.init()
         
         //
@@ -126,7 +128,7 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
             if wasProcessed == true {
                 
                 // Demonstrates dynamically setting the Success Screen Message.
-                FaceTecCustomization.setOverrideResultScreenSuccessMessage("Liveness\nConfirmed")
+                FaceTecCustomization.setOverrideResultScreenSuccessMessage(self.successMessage)
                 
                 // In v9.2.0+, simply pass in scanResultBlob to the proceedToNextStep function to advance the User flow.
                 // scanResultBlob is a proprietary, encrypted blob that controls the logic for what happens next for the User.

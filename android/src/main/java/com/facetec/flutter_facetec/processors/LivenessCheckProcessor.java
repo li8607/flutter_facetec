@@ -4,12 +4,13 @@
 package com.facetec.flutter_facetec.processors;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.facetec.flutter_facetec.R;
 import com.facetec.sdk.FaceTecCustomization;
 import com.facetec.sdk.FaceTecFaceScanProcessor;
 import com.facetec.sdk.FaceTecFaceScanResultCallback;
@@ -49,12 +50,15 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
 
     private String token;
 
-    public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey, String externalDatabaseRefID, String token) {
+    private String successMessage;
+
+    public LivenessCheckProcessor(String sessionToken, Activity activity, String baseUrl, String licenseKey, String externalDatabaseRefID, String token, String successMessage) {
         this.activity =  activity;
         this.baseUrl = baseUrl;
         this.licenseKey = licenseKey;
         this.externalDatabaseRefID = externalDatabaseRefID;
         this.token = token;
+        this.successMessage = successMessage;
 
         // Part 1:  Starting the FaceTec Session
         //
@@ -153,9 +157,8 @@ public class LivenessCheckProcessor extends Processor implements FaceTecFaceScan
                     // In v9.2.0+, we key off a new property called wasProcessed to determine if we successfully processed the Session result on the Server.
                     // Device SDK UI flow is now driven by the proceedToNextStep function, which should receive the scanResultBlob from the Server SDK response.
                     if(wasProcessed) {
-
-                        // Demonstrates dynamically setting the Success Screen Message.
-                        FaceTecCustomization.overrideResultScreenSuccessMessage = "Liveness\nConfirmed";
+//                        // Demonstrates dynamically setting the Success Screen Message.
+                        FaceTecCustomization.overrideResultScreenSuccessMessage = successMessage;
 
                         // In v9.2.0+, simply pass in scanResultBlob to the proceedToNextStep function to advance the User flow.
                         // scanResultBlob is a proprietary, encrypted blob that controls the logic for what happens next for the User.

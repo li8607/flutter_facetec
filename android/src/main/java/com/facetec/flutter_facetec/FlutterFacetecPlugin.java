@@ -74,7 +74,8 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
       String baseUrl =  call.argument("baseUrl");
       String externalDatabaseRefID = call.argument("externalDatabaseRefID");
       String token = call.argument("token");
-      startLiveness(baseUrl, deviceKeyIdentifier, externalDatabaseRefID, token, result);
+      String successMessage = call.argument("successMessage");
+      startLiveness(baseUrl, deviceKeyIdentifier, externalDatabaseRefID, token, successMessage, result);
     } else if (call.method.equals("setLocale")) {
       String language = call.argument("language");
       String country =  call.argument("country");
@@ -143,7 +144,7 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
     });
   }
 //
-  private void startLiveness(String baseUrl, String  deviceKeyIdentifier, String externalDatabaseRefID, String token, MethodChannel.Result result) {
+  private void startLiveness(String baseUrl, String  deviceKeyIdentifier, String externalDatabaseRefID, String token, String successMessage, MethodChannel.Result result) {
     pendingCallbackContext = new MethodResultWrapper(result);
     activity.runOnUiThread(new Runnable() {
       @Override
@@ -151,7 +152,7 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
         getSessionToken(baseUrl, deviceKeyIdentifier, token, new SessionTokenCallback() {
           @Override
           public void onSessionTokenReceived(String sessionToken) {
-            latestProcessor = new LivenessCheckProcessor(sessionToken, activity, baseUrl, deviceKeyIdentifier, externalDatabaseRefID, token);
+            latestProcessor = new LivenessCheckProcessor(sessionToken, activity, baseUrl, deviceKeyIdentifier, externalDatabaseRefID, token, successMessage);
           }
 
           @Override
