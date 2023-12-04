@@ -33,6 +33,7 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
         self.delegate = delegate
         self.token = token
         self.successMessage = successMessage
+        self.stillUploading = stillUploading
         super.init()
         
         //
@@ -153,7 +154,7 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
         //
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
             if self.latestNetworkRequest.state == .completed { return }
-            let uploadMessage: NSMutableAttributedString = NSMutableAttributedString.init(string: stillUploading)
+            let uploadMessage: NSMutableAttributedString = NSMutableAttributedString.init(string: self.stillUploading)
             faceScanResultCallback.onFaceScanUploadMessageOverride(uploadMessageOverride: uploadMessage)
         }
     }
