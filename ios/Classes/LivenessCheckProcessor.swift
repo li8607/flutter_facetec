@@ -23,8 +23,9 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
     var faceTecSessionResult: FaceTecSessionResult?
     var token: String
     var successMessage: String
+    var stillUploading: String
     
-    init(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, sessionToken: String, token: String, successMessage: String, fromViewController: UIViewController, delegate: ProcessorDelegate) {
+    init(baseUrl: String, deviceKeyIdentifier: String, externalDatabaseRefID: String, sessionToken: String, token: String, successMessage: String, stillUploading: String, fromViewController: UIViewController, delegate: ProcessorDelegate) {
         self.baseUrl = baseUrl
         self.deviceKeyIdentifier = deviceKeyIdentifier
         self.externalDatabaseRefID = externalDatabaseRefID
@@ -152,7 +153,7 @@ class LivenessCheckProcessor: NSObject, Processor, FaceTecFaceScanProcessorDeleg
         //
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
             if self.latestNetworkRequest.state == .completed { return }
-            let uploadMessage: NSMutableAttributedString = NSMutableAttributedString.init(string: "Still Uploading...")
+            let uploadMessage: NSMutableAttributedString = NSMutableAttributedString.init(string: stillUploading)
             faceScanResultCallback.onFaceScanUploadMessageOverride(uploadMessageOverride: uploadMessage)
         }
     }

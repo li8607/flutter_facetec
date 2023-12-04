@@ -22,13 +22,14 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
 
   @override
   Future<String?> startLiveness(String baseUrl, String deviceKeyIdentifier,
-      String externalDatabaseRefID, String token, String successMessage) async {
+      String externalDatabaseRefID, String token, String successMessage, String stillUploading) async {
     final result = await methodChannel.invokeMethod<String?>('startLiveness', {
       "baseUrl": baseUrl,
       "deviceKeyIdentifier": deviceKeyIdentifier,
       "externalDatabaseRefID": externalDatabaseRefID,
       "token": token,
       "successMessage": successMessage,
+      "stillUploading": stillUploading,
     });
     return result;
   }
