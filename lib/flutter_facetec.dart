@@ -36,4 +36,8 @@ class FlutterFacetec {
     return FlutterFacetecPlatform.instance.initializeInDevelopmentMode(
         deviceKeyIdentifier, publicFaceScanEncryptionKey);
   }
+
+  Future<String?> createFaceTecAPIUserAgentString() {
+    return FlutterFacetecPlatform.instance.createFaceTecAPIUserAgentString("");
+  }
 }
