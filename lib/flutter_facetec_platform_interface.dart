@@ -41,4 +41,8 @@ abstract class FlutterFacetecPlatform extends PlatformInterface {
   Future<bool?> setLocale(String language, String country) {
     throw UnimplementedError('setLocale() has not been implemented.');
   }
+
+   Future<String?> createFaceTecAPIUserAgentString(String sessionId) {
+    throw UnimplementedError('setLocale() has not been implemented.');
+  }
 }

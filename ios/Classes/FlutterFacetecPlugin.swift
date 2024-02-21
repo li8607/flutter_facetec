@@ -55,6 +55,14 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
             return result(FlutterError())
         }
         initializeInDevelopmentMode(deviceKeyIdentifier: deviceKeyIdentifier, publicFaceScanEncryptionKey: faceScanEncryptionKey, result: result)
+    case "createFaceTecAPIUserAgentString":
+        guard let args = call.arguments as? Dictionary<String, Any>,
+              let sessionId = args["sessionId"] as? String
+        else {
+            return result(FlutterError())
+        }
+        let faceTecAPIUserAgentString = FaceTec.sdk.createFaceTecAPIUserAgentString(sessionId)
+        result(faceTecAPIUserAgentString)
     default:
       result(FlutterMethodNotImplemented)
     }

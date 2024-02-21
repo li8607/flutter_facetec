@@ -51,9 +51,7 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
   private Activity activity;
-
   public Processor latestProcessor;
-
   private static Result pendingCallbackContext = null;
 
   @Override
@@ -81,10 +79,14 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
       String country =  call.argument("country");
       setLocale(language, country);
       result.success(true);
-    } else  if (call.method.equals("initializeInDevelopmentMode")) {
+    } else if (call.method.equals("initializeInDevelopmentMode")) {
       String deviceKeyIdentifier = call.argument("deviceKeyIdentifier");
       String publicFaceScanEncryptionKey = call.argument("publicFaceScanEncryptionKey");
       initializeInDevelopmentMode(deviceKeyIdentifier, publicFaceScanEncryptionKey, result);
+    } else if (call.method.equals("createFaceTecAPIUserAgentString")) {
+      String sessionId = call.argument("sessionId");
+      String faceTecAPIUserAgentString = FaceTecSDK.createFaceTecAPIUserAgentString(sessionId);
+      result.success(faceTecAPIUserAgentString);
     } else {
       result.notImplemented();
     }

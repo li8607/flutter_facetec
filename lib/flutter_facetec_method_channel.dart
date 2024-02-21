@@ -21,8 +21,13 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
   }
 
   @override
-  Future<String?> startLiveness(String baseUrl, String deviceKeyIdentifier,
-      String externalDatabaseRefID, String token, String successMessage, String stillUploading) async {
+  Future<String?> startLiveness(
+      String baseUrl,
+      String deviceKeyIdentifier,
+      String externalDatabaseRefID,
+      String token,
+      String successMessage,
+      String stillUploading) async {
     final result = await methodChannel.invokeMethod<String?>('startLiveness', {
       "baseUrl": baseUrl,
       "deviceKeyIdentifier": deviceKeyIdentifier,
@@ -51,6 +56,13 @@ class MethodChannelFlutterFacetec extends FlutterFacetecPlatform {
       "deviceKeyIdentifier": deviceKeyIdentifier,
       "publicFaceScanEncryptionKey": publicFaceScanEncryptionKey,
     });
+    return result;
+  }
+
+  @override
+  Future<String?> createFaceTecAPIUserAgentString(String sessionId) async {
+    final result = await methodChannel.invokeMethod<String>(
+        'createFaceTecAPIUserAgentString', {"sessionId": ""});
     return result;
   }
 }
