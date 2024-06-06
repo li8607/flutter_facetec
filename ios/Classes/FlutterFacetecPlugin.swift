@@ -130,6 +130,7 @@ public class FlutterFacetecPlugin: NSObject, FlutterPlugin, URLSessionDelegate, 
                 pendingResult!(FlutterError(code: "view not found", message: "view not found", details: nil))
             }
         }
+        pendingResult = nil
     }
     
     func getSessionToken(baseUrl: String, deviceKeyIdentifier: String, token: String, sessionTokenCallback: @escaping (String) -> ()) {

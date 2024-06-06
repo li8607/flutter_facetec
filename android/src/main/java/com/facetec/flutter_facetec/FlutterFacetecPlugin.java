@@ -179,8 +179,12 @@ public class FlutterFacetecPlugin implements FlutterPlugin, MethodCallHandler, E
     if (!this.latestProcessor.isSuccess()) {
       Log.d("isSuccess", "not isSuccess");
       pendingCallbackContext.success(null);
+      latestProcessor = null;
+      pendingCallbackContext = null;
     }else {
       pendingCallbackContext.success(latestProcessor.faceScan());
+      latestProcessor = null;
+      pendingCallbackContext = null;
     }
     return true;
   }
